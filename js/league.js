@@ -76,9 +76,16 @@ function teamsByDivision(divisions, teams) {
     return finalList;
 }
 
-function getLeagueOfTeam(team){
-    const division = divisions.find(item => item.id === team.divisionId)
-    const league = leagues.find(item => item.id === division.leagueId)
-
-    return league;
+function removeTeam(teamId){
+    const index = teams.findIndex(team => team.id === teamId);
+    if(index !== -1){
+        teams.splice(index, 1);
+    }
 }
+
+// function getLeagueOfTeam(team){
+//     const division = divisions.find(item => item.id === team.divisionId)
+//     const league = leagues.find(item => item.id === division.leagueId)
+//
+//     return league;
+// }

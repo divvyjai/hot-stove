@@ -34,3 +34,8 @@ body {
     display: flex;
     flex-direction: row;
 }
+
+.team{
+    display: flex;
+    flex-direction: row;
+}

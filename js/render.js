@@ -7,9 +7,28 @@ function renderDivision(division, divisionTeams){
     divisionContainer.appendChild(divisionHeading);
 
     for(let i = 0; i < divisionTeams.length; i++){
-        const teamText = document.createElement("p");
-        teamText.textContent = divisionTeams[i].name;
-        divisionContainer.appendChild(teamText);
+        const team = divisionTeams[i];
+
+        const teamContainer = document.createElement("div");
+        teamContainer.classList.add("team");
+        teamContainer.dataset.teamId = team.id;
+
+        const teamHeader = document.createElement("h4");
+        teamHeader.textContent = team.name;
+
+        teamContainer.appendChild(teamHeader);
+
+        const removeButton = document.createElement("button");
+        removeButton.classList.add("remove");
+        removeButton.textContent = "X";
+        removeButton.addEventListener("click", () => {
+            removeTeam(team.id);
+            renderAll();
+        })
+
+        teamContainer.appendChild(removeButton);
+
+        divisionContainer.appendChild(teamContainer);
     }
 
     return divisionContainer;
@@ -26,8 +45,8 @@ function renderLeague(league, teamsByDiv){
     const leagueDivisions = divisions.filter(item => item.leagueId === league.id);
 
     for(const division of leagueDivisions){
-        const currentDivision = renderDivision(division, teamsByDiv[division.id]);
-        leagueContainer.appendChild(currentDivision);
+        const divisionElement = renderDivision(division, teamsByDiv[division.id]);
+        leagueContainer.appendChild(divisionElement);
     }
 
     return leagueContainer;
@@ -40,15 +59,5 @@ function renderAll(){
     const teamsByDiv = teamsByDivision(divisions, teams);
     for(const league of leagues){
         container.append(renderLeague(league, teamsByDiv));
-    }
-}
-
-function renderTeams(){
-    const container = document.getElementById("right-div");
-
-    for(let i = 0; i < teams.length; i++){
-        const p = document.createElement("p");
-        p.textContent = teams[i].name;
-        container.appendChild(p);
     }
 }
