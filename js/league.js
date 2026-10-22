@@ -171,5 +171,60 @@ function validateSeason(){
         console.error("team game counts do not match")
         console.log("Minimum: " + Math.min(...gameCounts));
         console.log("Maximum: " + Math.max(...gameCounts));
+
+        return "Team counts do not match. Minimum: " + Math.min(...gameCounts) + ", maximum: " + Math.max(...gameCounts);
     }
+
+    return "All teams play " + gameCounts[0] + " games.";
+}
+
+function relationship(teamA, teamB){
+    if(teamA.divisionId === teamB.divisionId){
+        return "division";
+    }
+
+    const division = divisions.find(item => item.id === teamA.divisionId);
+    const teamsInLeague = [];
+
+    for(let newDivision of divisions){
+        if(newDivision.leagueId === division.leagueId){
+            const otherTeamsInLeague = teams.filter(t => t.divisionId === newDivision.id);
+            teamsInLeague.push(...otherTeamsInLeague);
+        }
+    }
+
+    if(teamsInLeague.includes(teamB)){
+        return "league";
+    }
+
+    return "interleague";
+}
+
+function generateMatchups(){
+    const matchups = [];
+
+    const gamesByType = {
+        division: seasonSettings.divisionGames,
+        league: seasonSettings.leagueGames,
+        interleague: seasonSettings.interleagueGames
+    };
+
+    for(let i = 0; i < teams.length; i++){
+        const teamA = teams[i];
+        for(let j = i + 1; j < teams.length; j++){
+            const teamB = teams[j];
+            const type = relationship(teamA, teamB);
+
+            const newMatchup = {
+                teamA: teamA.id,
+                teamB: teamB.id,
+                games: gamesByType[type],
+                type: type
+            }
+
+            matchups.push(newMatchup);
+        }
+    }
+
+    return matchups;
 }

@@ -130,7 +130,7 @@ function renderSettings(){
     const divisionLabel = document.createElement("label");
     divisionLabel.textContent = "Division Games:";
     const divisionNumber = document.createElement("input");
-    divisionNumber.type = "text";
+    divisionNumber.type = "number";
     divisionNumber.value = seasonSettings.divisionGames;
     divisionNumber.className = "game-number";
     divisionContainer.appendChild(divisionLabel);
@@ -140,7 +140,7 @@ function renderSettings(){
     const leagueLabel = document.createElement("label");
     leagueLabel.textContent = "League Games:";
     const leagueNumber = document.createElement("input");
-    leagueNumber.type = "text";
+    leagueNumber.type = "number";
     leagueNumber.value = seasonSettings.leagueGames;
     leagueNumber.className = "game-number";
     leagueContainer.appendChild(leagueLabel);
@@ -150,7 +150,7 @@ function renderSettings(){
     const interleagueLabel = document.createElement("label");
     interleagueLabel.textContent = "Interleague Games:";
     const interleagueNumber = document.createElement("input");
-    interleagueNumber.type = "text";
+    interleagueNumber.type = "number";
     interleagueNumber.value = seasonSettings.interleagueGames;
     interleagueNumber.className = "game-number";
     interleagueContainer.appendChild(interleagueLabel);
@@ -165,13 +165,17 @@ function renderSettings(){
     saveButton.textContent = "Save";
     saveButton.classList.add("save");
     saveButton.addEventListener("click", (event) => {
-        seasonSettings.divisionGames = divisionNumber.value;
-        seasonSettings.leagueGames = leagueNumber.value;
-        seasonSettings.interleagueGames = interleagueNumber.value;
+        seasonSettings.divisionGames = divisionNumber.valueAsNumber;
+        seasonSettings.leagueGames = leagueNumber.valueAsNumber;
+        seasonSettings.interleagueGames = interleagueNumber.valueAsNumber;
 
         console.log(seasonSettings);
     })
     container.appendChild(saveButton);
+
+    const seasonValidate = document.createElement("p");
+    seasonValidate.textContent = validateSeason();
+    container.appendChild(seasonValidate);
 
     return container;
 }
