@@ -57,6 +57,7 @@ const teams = [
 ]
 
 const league = {leagues, divisions, teams}
+let nextTeamId = 31;
 
 function teamsByDivision(divisions, teams) {
     const finalList = {};
@@ -83,9 +84,17 @@ function removeTeam(teamId){
     }
 }
 
-// function getLeagueOfTeam(team){
-//     const division = divisions.find(item => item.id === team.divisionId)
-//     const league = leagues.find(item => item.id === division.leagueId)
-//
-//     return league;
-// }
+function addTeam(divisionId, teamName){
+    const newTeam = {
+        id: nextTeamId,
+        initials: "ABC",
+        name: teamName,
+        shortName: "ABC",
+        logo: "images/PLACEHOLDER.png",
+        divisionId: divisionId
+    }
+
+    nextTeamId++;
+
+    teams.push(newTeam);
+}

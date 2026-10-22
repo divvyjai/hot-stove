@@ -31,6 +31,34 @@ function renderDivision(division, divisionTeams){
         divisionContainer.appendChild(teamContainer);
     }
 
+    const newTeamContainer = document.createElement("div");
+    newTeamContainer.classList.add("newTeam");
+    const newTeamName = document.createElement("input");
+    newTeamName.classList.add("newTeamName");
+    newTeamName.type = "text";
+    const addButton = document.createElement("button");
+    addButton.textContent = "+";
+
+    const submitNewTeam = () => {
+        const name = newTeamName.value.trim();
+        if(name !== ""){
+            addTeam(division.id, name);
+            renderAll();
+        }
+    }
+
+    addButton.addEventListener("click", submitNewTeam);
+    newTeamName.addEventListener("keydown", (event) => {
+        if(event.key === "Enter"){
+            submitNewTeam()
+        }
+    });
+
+    newTeamContainer.appendChild(newTeamName);
+    newTeamContainer.appendChild(addButton);
+
+    divisionContainer.appendChild(newTeamContainer);
+
     return divisionContainer;
 }
 
