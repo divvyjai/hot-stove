@@ -58,6 +58,7 @@ const teams = [
 
 const league = {leagues, divisions, teams}
 const seasonSettings = {divisionGames: 13, leagueGames: 8, interleagueGames: 2}
+const MAX_SERIES_LENGTH = 4;
 let nextTeamId = 31;
 let nextDivisionId = 7;
 
@@ -291,7 +292,7 @@ function generateSeries(matchups){
     }
 
     for(let matchup of matchups){
-        const series = splitIntoSeries(matchup.games, 4);
+        const series = splitIntoSeries(matchup.games, MAX_SERIES_LENGTH);
         let aHosted;
 
         for(let numGames of series) {
@@ -316,8 +317,6 @@ function generateSeries(matchups){
             aHosted = aHostsThis;
         }
     }
-
-    console.log(balance);
 
     return finalArray;
 }
