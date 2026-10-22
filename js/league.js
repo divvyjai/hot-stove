@@ -202,16 +202,16 @@ function relationship(teamA, teamB){
 
 function generateMatchups(){
     const matchups = [];
-    const homeCount = [];
+    // const homeCount = [];
 
-    for(let team of teams){
-        const newCount = {
-            teamId: team.id,
-            count: 0
-        }
-
-        homeCount.push(newCount);
-    }
+    // for(let team of teams){
+    //     const newCount = {
+    //         teamId: team.id,
+    //         count: 0
+    //     }
+    //
+    //     homeCount.push(newCount);
+    // }
 
     const gamesByType = {
         division: seasonSettings.divisionGames,
@@ -226,28 +226,28 @@ function generateMatchups(){
             const type = relationship(teamA, teamB);
             const games = gamesByType[type];
 
-            const teamAHomeCount = homeCount.find(item => item.teamId === teamA.id).count;
-            const teamBHomeCount = homeCount.find(item => item.teamId === teamB.id).count;
-
-            let homeA = 0;
-            let homeB = 0;
-
-            if(teamAHomeCount > teamBHomeCount){
-                homeA = Math.floor(games / 2);
-                homeB = Math.ceil(games / 2);
-            } else {
-                homeA = Math.ceil(games / 2);
-                homeB = Math.floor(games / 2);
-            }
-
-            homeCount.find(item => item.teamId === teamA.id).count += homeA;
-            homeCount.find(item => item.teamId === teamB.id).count += homeB;
+            // const teamAHomeCount = homeCount.find(item => item.teamId === teamA.id).count;
+            // const teamBHomeCount = homeCount.find(item => item.teamId === teamB.id).count;
+            //
+            // let homeA = 0;
+            // let homeB = 0;
+            //
+            // if(teamAHomeCount > teamBHomeCount){
+            //     homeA = Math.floor(games / 2);
+            //     homeB = Math.ceil(games / 2);
+            // } else {
+            //     homeA = Math.ceil(games / 2);
+            //     homeB = Math.floor(games / 2);
+            // }
+            //
+            // homeCount.find(item => item.teamId === teamA.id).count += homeA;
+            // homeCount.find(item => item.teamId === teamB.id).count += homeB;
 
             const newMatchup = {
                 teamA: teamA.id,
                 teamB: teamB.id,
-                homeA: homeA,
-                homeB: homeB,
+                // homeA: homeA,
+                // homeB: homeB,
                 games: gamesByType[type],
                 type: type
             }
@@ -256,7 +256,68 @@ function generateMatchups(){
         }
     }
 
-    console.log(homeCount);
-
     return matchups;
+}
+
+function splitIntoSeries(games, maxLength){
+    if(games <= 0){
+        return [];
+    }
+
+    const finalArray = [];
+
+    const noSeries = Math.ceil(games / maxLength);
+    const minGamesPerSeries = Math.floor(games / noSeries);
+    let remainder = games % noSeries;
+
+    for(let i = 0; i < noSeries; i++){
+        if(remainder > 0){
+            finalArray.push(minGamesPerSeries + 1);
+            remainder--;
+        } else {
+            finalArray.push(minGamesPerSeries);
+        }
+    }
+
+    return finalArray;
+}
+
+function generateSeries(matchups){
+    const finalArray = [];
+    const balance = {};
+
+    for(let team of teams){
+        balance[team.id] = 0;
+    }
+
+    for(let matchup of matchups){
+        const series = splitIntoSeries(matchup.games, 4);
+        let aHosted;
+
+        for(let numGames of series) {
+            let aHostsThis;
+            const teamABalance = balance[matchup.teamA];
+            const teamBBalance = balance[matchup.teamB];
+
+            if (teamABalance < teamBBalance) {
+                aHostsThis = true;
+            } else if (teamABalance > teamBBalance) {
+                aHostsThis = false;
+            } else {
+                aHostsThis = !aHosted;
+            }
+
+            const home = aHostsThis ? matchup.teamA : matchup.teamB;
+            const away = aHostsThis ? matchup.teamB : matchup.teamA;
+
+            finalArray.push({home: home, away: away, games: numGames});
+            balance[home] += numGames;
+            balance[away] -= numGames;
+            aHosted = aHostsThis;
+        }
+    }
+
+    console.log(balance);
+
+    return finalArray;
 }
