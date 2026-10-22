@@ -166,3 +166,26 @@ body {
     display: flex;
     flex-direction: row;
 }
+
+.settings-container{
+    width: 90%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 20px;
+}
+
+.game-number{
+    text-align: center;
+    width: 25px;
+}
+
+.save{
+    width: 100px;
+}

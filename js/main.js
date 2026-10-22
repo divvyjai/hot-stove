@@ -1,1 +1,2 @@
 renderAll()
+validateSeason()

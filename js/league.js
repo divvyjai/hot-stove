@@ -57,6 +57,7 @@ const teams = [
 ]
 
 const league = {leagues, divisions, teams}
+const seasonSettings = {divisionGames: 13, leagueGames: 8, interleagueGames: 2}
 let nextTeamId = 31;
 let nextDivisionId = 7;
 
@@ -115,15 +116,60 @@ function removeDivision(divisionId){
 }
 
 function addDivision(leagueId, divisionName){
+    const league = leagues.find(league => league.id === leagueId);
     const newDivision = {
         id: nextDivisionId,
         initials: "ABC",
-        name: divisionName,
-        shortName: "ABC",
+        name: league.name + " " + divisionName,
+        shortName: league.initials + " " + divisionName,
         leagueId: leagueId
     }
 
     nextDivisionId++;
 
     divisions.push(newDivision);
+}
+
+// function getLeagueOfTeam(team){
+//     const division = divisions.find(item => item.id === team.divisionId);
+//     const league = leagues.find(item => item.id === division.leagueId);
+//
+//     return league;
+// }
+
+function gamesForTeam(team){
+    const division = divisions.find(item => item.id === team.divisionId);
+
+    const teamsInDivision = teams.filter(t => t.divisionId === division.id).length;
+    let teamsInLeague = 0;
+
+    for(let newDivision of divisions){
+        if(newDivision.leagueId === division.leagueId){
+            const otherTeamsInLeague = teams.filter(t => t.divisionId === newDivision.id);
+            teamsInLeague += otherTeamsInLeague.length;
+        }
+    }
+
+    const divisionGames = (teamsInDivision - 1) * seasonSettings.divisionGames;
+    const leagueGames = (teamsInLeague - teamsInDivision) * seasonSettings.leagueGames;
+    const interleagueGames = (teams.length - teamsInLeague) * seasonSettings.interleagueGames;
+
+    // console.log(divisionGames);
+    // console.log(leagueGames);
+    // console.log(interleagueGames);
+
+    return divisionGames + leagueGames + interleagueGames;
+}
+
+function validateSeason(){
+    const gameCounts = [];
+    for(let team of teams){
+        gameCounts.push(gamesForTeam(team));
+    }
+
+    if(Math.max(...gameCounts) !== Math.min(...gameCounts)){
+        console.error("team game counts do not match")
+        console.log("Minimum: " + Math.min(...gameCounts));
+        console.log("Maximum: " + Math.max(...gameCounts));
+    }
 }

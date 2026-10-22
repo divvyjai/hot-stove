@@ -120,12 +120,72 @@ function renderLeague(league, teamsByDiv){
     return leagueContainer;
 }
 
+function renderSettings(){
+    const container = document.createElement("div");
+    container.classList.add("settings-container");
+    const settingsContainer = document.createElement("div");
+    settingsContainer.classList.add("settings");
+
+    const divisionContainer = document.createElement("div");
+    const divisionLabel = document.createElement("label");
+    divisionLabel.textContent = "Division Games:";
+    const divisionNumber = document.createElement("input");
+    divisionNumber.type = "text";
+    divisionNumber.value = seasonSettings.divisionGames;
+    divisionNumber.className = "game-number";
+    divisionContainer.appendChild(divisionLabel);
+    divisionContainer.appendChild(divisionNumber);
+
+    const leagueContainer = document.createElement("div");
+    const leagueLabel = document.createElement("label");
+    leagueLabel.textContent = "League Games:";
+    const leagueNumber = document.createElement("input");
+    leagueNumber.type = "text";
+    leagueNumber.value = seasonSettings.leagueGames;
+    leagueNumber.className = "game-number";
+    leagueContainer.appendChild(leagueLabel);
+    leagueContainer.appendChild(leagueNumber);
+
+    const interleagueContainer = document.createElement("div");
+    const interleagueLabel = document.createElement("label");
+    interleagueLabel.textContent = "Interleague Games:";
+    const interleagueNumber = document.createElement("input");
+    interleagueNumber.type = "text";
+    interleagueNumber.value = seasonSettings.interleagueGames;
+    interleagueNumber.className = "game-number";
+    interleagueContainer.appendChild(interleagueLabel);
+    interleagueContainer.appendChild(interleagueNumber);
+
+    settingsContainer.appendChild(divisionContainer);
+    settingsContainer.appendChild(leagueContainer);
+    settingsContainer.appendChild(interleagueContainer);
+    container.appendChild(settingsContainer);
+
+    const saveButton = document.createElement("button");
+    saveButton.textContent = "Save";
+    saveButton.classList.add("save");
+    saveButton.addEventListener("click", (event) => {
+        seasonSettings.divisionGames = divisionNumber.value;
+        seasonSettings.leagueGames = leagueNumber.value;
+        seasonSettings.interleagueGames = interleagueNumber.value;
+
+        console.log(seasonSettings);
+    })
+    container.appendChild(saveButton);
+
+    return container;
+}
+
 function renderAll(){
-    const container = document.getElementById("right-div");
-    container.textContent = "";
+    const rightContainer = document.getElementById("right-div");
+    const leftContainer = document.getElementById("left-div");
+    rightContainer.textContent = "";
+    leftContainer.textContent = "";
 
     const teamsByDiv = teamsByDivision(divisions, teams);
     for(const league of leagues){
-        container.append(renderLeague(league, teamsByDiv));
+        rightContainer.append(renderLeague(league, teamsByDiv));
     }
+
+    leftContainer.append(renderSettings());
 }
