@@ -13,7 +13,7 @@ function renderDivision(division, divisionTeams){
         teamContainer.classList.add("team");
         teamContainer.dataset.teamId = team.id;
 
-        const teamHeader = document.createElement("h4");
+        const teamHeader = document.createElement("p");
         teamHeader.textContent = team.name;
 
         teamContainer.appendChild(teamHeader);
@@ -32,10 +32,11 @@ function renderDivision(division, divisionTeams){
     }
 
     const newTeamContainer = document.createElement("div");
-    newTeamContainer.classList.add("newTeam");
+    newTeamContainer.classList.add("new-team");
     const newTeamName = document.createElement("input");
-    newTeamName.classList.add("newTeamName");
+    newTeamName.classList.add("new-team-name");
     newTeamName.type = "text";
+    newTeamName.placeholder = "Add team..."
     const addButton = document.createElement("button");
     addButton.textContent = "+";
 

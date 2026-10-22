@@ -37,7 +37,7 @@ const teams = [
     // AL West (division 4)
     { id:16, initials:"HOU", name:"Houston Astros",        shortName:"Astros",       logo:"images/PLACEHOLDER.png", divisionId:4 },
     { id:17, initials:"LAA", name:"Los Angeles Angels",    shortName:"Angels",       logo:"images/PLACEHOLDER.png", divisionId:4 },
-    { id:18, initials:"ATH", name:"Athletics",             shortName:"Athletics",    logo:"images/PLACEHOLDER.png", divisionId:4 },
+    { id:18, initials:"ATH", name:"Oakland Athletics",     shortName:"Athletics",    logo:"images/PLACEHOLDER.png", divisionId:4 },
     { id:19, initials:"SEA", name:"Seattle Mariners",      shortName:"Mariners",     logo:"images/PLACEHOLDER.png", divisionId:4 },
     { id:20, initials:"TEX", name:"Texas Rangers",         shortName:"Rangers",      logo:"images/PLACEHOLDER.png", divisionId:4 },
 
