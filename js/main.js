@@ -1,1 +1,1 @@
-renderTeams();
+renderAll()
