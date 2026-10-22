@@ -6,6 +6,16 @@ function renderDivision(division, divisionTeams){
     divisionHeading.textContent = division.shortName;
     divisionContainer.appendChild(divisionHeading);
 
+    const removeButton = document.createElement("button");
+    removeButton.classList.add("remove");
+    removeButton.textContent = "X";
+    removeButton.addEventListener("click", () => {
+        removeDivision(division.id);
+        renderAll();
+    })
+
+    divisionContainer.appendChild(removeButton);
+
     for(let i = 0; i < divisionTeams.length; i++){
         const team = divisionTeams[i];
 
@@ -77,6 +87,35 @@ function renderLeague(league, teamsByDiv){
         const divisionElement = renderDivision(division, teamsByDiv[division.id]);
         leagueContainer.appendChild(divisionElement);
     }
+
+    const newDivisionContainer = document.createElement("div");
+    newDivisionContainer.classList.add("new-division");
+    const newDivisionName = document.createElement("input");
+    newDivisionName.classList.add("new-division-name");
+    newDivisionName.type = "text";
+    newDivisionName.placeholder = "Add division..."
+    const addButton = document.createElement("button");
+    addButton.textContent = "+";
+
+    const submitNewDivision = () => {
+        const name = newDivisionName.value.trim();
+        if(name !== ""){
+            addDivision(league.id, name);
+            renderAll();
+        }
+    }
+
+    addButton.addEventListener("click", submitNewDivision);
+    newDivisionName.addEventListener("keydown", (event) => {
+        if(event.key === "Enter"){
+            submitNewDivision();
+        }
+    });
+
+    newDivisionContainer.appendChild(newDivisionName);
+    newDivisionContainer.appendChild(addButton);
+
+    leagueContainer.appendChild(newDivisionContainer);
 
     return leagueContainer;
 }

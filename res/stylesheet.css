@@ -40,11 +40,29 @@ body {
     width: 100%;
 }
 
-.division-container{
+.division-container {
     background-color: rgb(30, 30, 30);
     padding: 10px;
     border-radius: 10px;
     margin: 10px;
+    align-items: center;
+}
+
+.division-container > button{
+    transition: 0.2s;
+    height: 35px;
+    width: 35px;
+    color: white;
+    background-color: rgb(25, 25, 25);
+    border: rgb(35, 35, 35) solid 2px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.division-container > button:hover{
+    transition: 0.2s;
+    cursor: pointer;
+    background-color: rgb(28, 28, 28);
 }
 
 .team{
@@ -99,6 +117,41 @@ body {
 }
 
 .new-team > button:hover{
+    transition: 0.2s;
+    cursor: pointer;
+    background-color: rgb(28, 28, 28);
+}
+
+.new-division{
+    display: flex;
+    flex: 1;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.new-division > input{
+    color: white;
+    height: 35px;
+    background-color: rgb(25, 25, 25);
+    border: rgb(35, 35, 35) solid 2px;
+    border-radius: 5px;
+    width: 88%;
+    padding: 10px;
+}
+
+.new-division > button{
+    transition: 0.2s;
+    height: 35px;
+    width: 35px;
+    color: white;
+    background-color: rgb(25, 25, 25);
+    border: rgb(35, 35, 35) solid 2px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.new-division > button:hover{
     transition: 0.2s;
     cursor: pointer;
     background-color: rgb(28, 28, 28);

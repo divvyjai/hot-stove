@@ -58,6 +58,7 @@ const teams = [
 
 const league = {leagues, divisions, teams}
 let nextTeamId = 31;
+let nextDivisionId = 7;
 
 function teamsByDivision(divisions, teams) {
     const finalList = {};
@@ -97,4 +98,32 @@ function addTeam(divisionId, teamName){
     nextTeamId++;
 
     teams.push(newTeam);
+}
+
+function removeDivision(divisionId){
+    const index = divisions.findIndex(division => division.id === divisionId);
+    if(index !== -1){
+        divisions.splice(index, 1);
+    }
+
+    for(let i = teams.length - 1; i >= 0; i--){
+        const currentTeam = teams[i];
+        if(currentTeam.divisionId === divisionId){
+            teams.splice(i, 1);
+        }
+    }
+}
+
+function addDivision(leagueId, divisionName){
+    const newDivision = {
+        id: nextDivisionId,
+        initials: "ABC",
+        name: divisionName,
+        shortName: "ABC",
+        leagueId: leagueId
+    }
+
+    nextDivisionId++;
+
+    divisions.push(newDivision);
 }
