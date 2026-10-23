@@ -1,20 +1,52 @@
+// What was just added ("team-31", "division-7"), so the next render can highlight it.
+// renderAll() clears it, so the highlight only plays once.
+let justAdded = null;
+
+// Plays a short fade-out on the element, then removes the data and redraws.
+function removeWithAnimation(element, removeFn){
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduceMotion){
+        removeFn();
+        renderAll();
+        return;
+    }
+
+    element.classList.add("removing");
+    setTimeout(() => {
+        removeFn();
+        renderAll();
+    }, 200);
+}
+
 function renderDivision(division, divisionTeams){
     const divisionContainer = document.createElement("div");
     divisionContainer.classList.add("division-container");
+    if(justAdded === "division-" + division.id){
+        divisionContainer.classList.add("just-added");
+    }
+
+    const divisionHeader = document.createElement("div");
+    divisionHeader.classList.add("division-header");
 
     const divisionHeading = document.createElement("h3");
     divisionHeading.textContent = division.shortName;
-    divisionContainer.appendChild(divisionHeading);
+
+    const divisionCount = document.createElement("span");
+    divisionCount.classList.add("count");
+    divisionCount.textContent = divisionTeams.length;
+    divisionCount.title = divisionTeams.length + " teams";
+    divisionHeading.appendChild(divisionCount);
+    divisionHeader.appendChild(divisionHeading);
 
     const removeButton = document.createElement("button");
-    removeButton.classList.add("remove");
+    removeButton.classList.add("icon-btn", "remove");
     removeButton.textContent = "X";
     removeButton.addEventListener("click", () => {
-        removeDivision(division.id);
-        renderAll();
+        removeWithAnimation(divisionContainer, () => removeDivision(division.id));
     })
 
-    divisionContainer.appendChild(removeButton);
+    divisionHeader.appendChild(removeButton);
+    divisionContainer.appendChild(divisionHeader);
 
     for(let i = 0; i < divisionTeams.length; i++){
         const team = divisionTeams[i];
@@ -22,6 +54,14 @@ function renderDivision(division, divisionTeams){
         const teamContainer = document.createElement("div");
         teamContainer.classList.add("team");
         teamContainer.dataset.teamId = team.id;
+        if(justAdded === "team-" + team.id){
+            teamContainer.classList.add("just-added");
+        }
+
+        const badge = document.createElement("span");
+        badge.classList.add("badge");
+        badge.textContent = team.initials;
+        teamContainer.appendChild(badge);
 
         const teamHeader = document.createElement("p");
         teamHeader.textContent = team.name;
@@ -29,11 +69,10 @@ function renderDivision(division, divisionTeams){
         teamContainer.appendChild(teamHeader);
 
         const removeButton = document.createElement("button");
-        removeButton.classList.add("remove");
+        removeButton.classList.add("icon-btn", "remove");
         removeButton.textContent = "X";
         removeButton.addEventListener("click", () => {
-            removeTeam(team.id);
-            renderAll();
+            removeWithAnimation(teamContainer, () => removeTeam(team.id));
         })
 
         teamContainer.appendChild(removeButton);
@@ -48,12 +87,14 @@ function renderDivision(division, divisionTeams){
     newTeamName.type = "text";
     newTeamName.placeholder = "Add team..."
     const addButton = document.createElement("button");
+    addButton.classList.add("icon-btn");
     addButton.textContent = "+";
 
     const submitNewTeam = () => {
         const name = newTeamName.value.trim();
         if(name !== ""){
-            addTeam(division.id, name);
+            const newTeam = addTeam(division.id, name);
+            justAdded = "team-" + newTeam.id;
             renderAll();
         }
     }
@@ -83,10 +124,11 @@ function renderLeague(league, teamsByDiv){
 
     const leagueDivisions = divisions.filter(item => item.leagueId === league.id);
 
-    for(const division of leagueDivisions){
+    leagueDivisions.forEach((division, index) => {
         const divisionElement = renderDivision(division, teamsByDiv[division.id]);
+        divisionElement.style.setProperty("--n", index);     // used to stagger the intro animation
         leagueContainer.appendChild(divisionElement);
-    }
+    });
 
     const newDivisionContainer = document.createElement("div");
     newDivisionContainer.classList.add("new-division");
@@ -95,12 +137,14 @@ function renderLeague(league, teamsByDiv){
     newDivisionName.type = "text";
     newDivisionName.placeholder = "Add division..."
     const addButton = document.createElement("button");
+    addButton.classList.add("icon-btn");
     addButton.textContent = "+";
 
     const submitNewDivision = () => {
         const name = newDivisionName.value.trim();
         if(name !== ""){
-            addDivision(league.id, name);
+            const newDivision = addDivision(league.id, name);
+            justAdded = "division-" + newDivision.id;
             renderAll();
         }
     }
@@ -123,12 +167,22 @@ function renderLeague(league, teamsByDiv){
 function renderSettings(){
     const container = document.createElement("div");
     container.classList.add("settings-container");
+
+    const settingsHeading = document.createElement("h2");
+    settingsHeading.textContent = "Season";
+    container.appendChild(settingsHeading);
+
+    const settingsHint = document.createElement("p");
+    settingsHint.classList.add("hint");
+    settingsHint.textContent = "Games played against each opponent";
+    container.appendChild(settingsHint);
+
     const settingsContainer = document.createElement("div");
     settingsContainer.classList.add("settings");
 
     const divisionContainer = document.createElement("div");
     const divisionLabel = document.createElement("label");
-    divisionLabel.textContent = "Division Games:";
+    divisionLabel.textContent = "Division rival";
     const divisionNumber = document.createElement("input");
     divisionNumber.type = "number";
     divisionNumber.value = seasonSettings.divisionGames;
@@ -138,7 +192,7 @@ function renderSettings(){
 
     const leagueContainer = document.createElement("div");
     const leagueLabel = document.createElement("label");
-    leagueLabel.textContent = "League Games:";
+    leagueLabel.textContent = "League rival";
     const leagueNumber = document.createElement("input");
     leagueNumber.type = "number";
     leagueNumber.value = seasonSettings.leagueGames;
@@ -148,13 +202,19 @@ function renderSettings(){
 
     const interleagueContainer = document.createElement("div");
     const interleagueLabel = document.createElement("label");
-    interleagueLabel.textContent = "Interleague Games:";
+    interleagueLabel.textContent = "Interleague rival";
     const interleagueNumber = document.createElement("input");
     interleagueNumber.type = "number";
     interleagueNumber.value = seasonSettings.interleagueGames;
     interleagueNumber.className = "game-number";
     interleagueContainer.appendChild(interleagueLabel);
     interleagueContainer.appendChild(interleagueNumber);
+
+    for(const input of [divisionNumber, leagueNumber, interleagueNumber]){
+        input.min = 0;
+        input.step = 1;
+        input.required = true;
+    }
 
     settingsContainer.appendChild(divisionContainer);
     settingsContainer.appendChild(leagueContainer);
@@ -164,17 +224,24 @@ function renderSettings(){
     const saveButton = document.createElement("button");
     saveButton.textContent = "Save";
     saveButton.classList.add("save");
-    saveButton.addEventListener("click", (event) => {
-        seasonSettings.divisionGames = divisionNumber.valueAsNumber;
-        seasonSettings.leagueGames = leagueNumber.valueAsNumber;
-        seasonSettings.interleagueGames = interleagueNumber.valueAsNumber;
+    saveButton.addEventListener("click", () => {
+        const values = [divisionNumber, leagueNumber, interleagueNumber].map(input => input.valueAsNumber);
+        if(values.some(value => !Number.isInteger(value) || value < 0)){
+            return;
+        }
 
-        console.log(seasonSettings);
+        seasonSettings.divisionGames = values[0];
+        seasonSettings.leagueGames = values[1];
+        seasonSettings.interleagueGames = values[2];
+
+        renderAll();
     })
     container.appendChild(saveButton);
 
+    const status = validateSeason();
     const seasonValidate = document.createElement("p");
-    seasonValidate.textContent = validateSeason();
+    seasonValidate.classList.add("status", status.valid ? "valid" : "invalid");
+    seasonValidate.textContent = status.message;
     container.appendChild(seasonValidate);
 
     return container;
@@ -192,6 +259,8 @@ function renderAll(){
     }
 
     leftContainer.append(renderSettings());
+
+    justAdded = null;
 }
 
 function splitTitle(){

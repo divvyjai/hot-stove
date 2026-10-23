@@ -90,16 +90,17 @@ function removeTeam(teamId){
 function addTeam(divisionId, teamName){
     const newTeam = {
         id: nextTeamId,
-        initials: "ABC",
+        initials: teamName.slice(0, 3).toUpperCase(),
         name: teamName,
-        shortName: "ABC",
+        shortName: teamName,
         logo: "images/PLACEHOLDER.png",
         divisionId: divisionId
     }
 
     nextTeamId++;
-
     teams.push(newTeam);
+
+    return newTeam;
 }
 
 function removeDivision(divisionId){
@@ -129,6 +130,8 @@ function addDivision(leagueId, divisionName){
     nextDivisionId++;
 
     divisions.push(newDivision);
+
+    return newDivision;
 }
 
 // function getLeagueOfTeam(team){
@@ -173,10 +176,10 @@ function validateSeason(){
         console.log("Minimum: " + Math.min(...gameCounts));
         console.log("Maximum: " + Math.max(...gameCounts));
 
-        return "Team counts do not match. Minimum: " + Math.min(...gameCounts) + ", maximum: " + Math.max(...gameCounts);
+        return { valid: false, message: "Team counts do not match. Minimum: " + Math.min(...gameCounts) + ", maximum: " + Math.max(...gameCounts) };
     }
 
-    return "All teams play " + gameCounts[0] + " games.";
+    return { valid: true, message: "All teams play " + gameCounts[0] + " games." };
 }
 
 function relationship(teamA, teamB){

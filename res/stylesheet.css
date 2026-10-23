@@ -1,26 +1,73 @@
-body {
-    background-color: rgb(25, 25, 25);
-    color: white;
-    font-family: "Google Sans Code", monospace;
+/* =====================================================================
+   DIRECTION B: THE OUTFIELD SCOREBOARD
+   A hand-painted ballpark board: dark green panels, white painted
+   lettering, name plates, and amber LED numbers.
+   Fonts: Big Shoulders Display (painted lettering), Doto (LEDs).
+   ===================================================================== */
+
+:root {
+    color-scheme: dark;
+
+    --wall: #0a100c;
+    --board: #17311f;
+    --board-deep: #10241a;
+    --paint: #f2f0e6;
+    --paint-dim: #a9bbab;
+    --seam: rgba(242, 240, 230, 0.28);
+    --led: #ffb320;           /* amber LED */
+    --led-red: #ff5a47;
+    --led-green: #5be07f;
+    --al: #e5533d;            /* first league */
+    --nl: #5aa0e0;            /* second league */
+
+    --paint-font: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --led-font: "Doto", monospace;
+    --transition: 0.18s ease;
 }
 
-.main-div{
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--wall);
+    color: var(--paint);
+    font-family: var(--paint-font);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+:focus-visible {
+    outline: 2px solid var(--led);
+    outline-offset: 2px;
+}
+
+/* ---------- Header: a black LED marquee ---------- */
+.main-div {
     display: flex;
     flex-direction: column;
 }
 
 .header {
     display: flex;
-    height: 100px;
-    width: 100%;
     justify-content: center;
     align-items: center;
+    margin-bottom: 28px;
+    padding: 22px 16px 18px;
+    background: #000;
+    border-bottom: 6px solid var(--board);
+    box-shadow: 0 1px 0 var(--seam);
 }
 
 .header h1 {
-    font-family: "Doto", sans-serif;
-    font-size: 3rem;
-    font-weight: 700;
+    margin: 0;
+    font-family: var(--led-font);
+    font-weight: 800;
+    font-size: clamp(2rem, 9vw, 4rem);
+    color: var(--led);
+    letter-spacing: 0.04em;
 }
 
 .header h1 span {
@@ -30,180 +77,426 @@ body {
 }
 
 @keyframes letter-wave {
-    0%, 30%, 100% { transform: translateY(0); text-shadow: 0 0 6px rgba(255, 255, 255, 0.25); }
-    15%           { transform: translateY(-6px); text-shadow: 0 0 16px rgba(255, 255, 255, 0.95); }
+    0%, 30%, 100% { transform: translateY(0); text-shadow: 0 0 6px rgba(255, 179, 32, 0.35); }
+    15%           { transform: translateY(-5px); text-shadow: 0 0 18px rgba(255, 179, 32, 0.95); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .header h1 span {
-        animation: none;
+/* ---------- Page layout ---------- */
+.content-div {
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+    padding: 0 24px 56px;
+}
+
+#left-div {
+    position: sticky;
+    top: 16px;
+    padding: 20px;
+    border: 3px solid var(--paint);
+    box-shadow: inset 0 0 0 5px var(--board), inset 0 0 0 7px var(--seam);
+    background:
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) left 9px top 9px / 12px 12px no-repeat,
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) right 9px top 9px / 12px 12px no-repeat,
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) left 9px bottom 9px / 12px 12px no-repeat,
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) right 9px bottom 9px / 12px 12px no-repeat,
+            var(--board);
+}
+
+#right-div {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: 28px;
+}
+
+@media (max-width: 860px) {
+    .content-div {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 0 14px 40px;
+    }
+
+    #left-div {
+        position: static;
     }
 }
 
-#left-div{
-    display: flex;
-    height: 80%;
-    width: 50%;
-}
-
-#right-div{
-    display: flex;
-    height: 80%;
-    width: 50%;
-    flex-direction: row;
-    justify-content: space-evenly;
-}
-
-.league-container{
-    width: 100%;
-}
-
-.division-container {
-    background-color: rgb(30, 30, 30);
-    padding: 10px;
-    border-radius: 10px;
-    margin: 10px;
-    align-items: center;
-}
-
-.division-container > button{
-    transition: 0.2s;
-    height: 35px;
-    width: 35px;
-    color: white;
-    background-color: rgb(25, 25, 25);
-    border: rgb(35, 35, 35) solid 2px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.division-container > button:hover{
-    transition: 0.2s;
-    cursor: pointer;
-    background-color: rgb(28, 28, 28);
-}
-
-.team{
-    justify-content: space-between;
-    align-items: center;
-}
-
-.team > button{
-    transition: 0.2s;
-    height: 35px;
-    width: 35px;
-    color: white;
-    background-color: rgb(25, 25, 25);
-    border: rgb(35, 35, 35) solid 2px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.team > button:hover{
-    transition: 0.2s;
-    cursor: pointer;
-    background-color: rgb(28, 28, 28);
-}
-
-.new-team{
-    display: flex;
-    flex: 1;
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 5px;
-}
-
-.new-team > input{
-    color: white;
-    height: 35px;
-    background-color: rgb(25, 25, 25);
-    border: rgb(35, 35, 35) solid 2px;
-    border-radius: 5px;
-    width: 88%;
-    padding: 10px;
-}
-
-.new-team > button{
-    transition: 0.2s;
-    height: 35px;
-    width: 35px;
-    color: white;
-    background-color: rgb(25, 25, 25);
-    border: rgb(35, 35, 35) solid 2px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.new-team > button:hover{
-    transition: 0.2s;
-    cursor: pointer;
-    background-color: rgb(28, 28, 28);
-}
-
-.new-division{
-    display: flex;
-    flex: 1;
-    width: 100%;
-    justify-content: space-between;
-    margin-top: 5px;
-}
-
-.new-division > input{
-    color: white;
-    height: 35px;
-    background-color: rgb(25, 25, 25);
-    border: rgb(35, 35, 35) solid 2px;
-    border-radius: 5px;
-    width: 88%;
-    padding: 10px;
-}
-
-.new-division > button{
-    transition: 0.2s;
-    height: 35px;
-    width: 35px;
-    color: white;
-    background-color: rgb(25, 25, 25);
-    border: rgb(35, 35, 35) solid 2px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-.new-division > button:hover{
-    transition: 0.2s;
-    cursor: pointer;
-    background-color: rgb(28, 28, 28);
-}
-
-.content-div{
-    display: flex;
-    flex-direction: row;
-}
-
-.team{
-    display: flex;
-    flex-direction: row;
-}
-
-.settings-container{
-    width: 90%;
-    padding: 10px;
+/* ---------- Leagues: one big board each ---------- */
+.league-container {
+    --accent: var(--al);
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    padding: 22px 22px 18px;
+    border: 3px solid var(--paint);
+    box-shadow: inset 0 0 0 5px var(--board), inset 0 0 0 7px var(--seam);
+    background:
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) left 9px top 9px / 12px 12px no-repeat,
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) right 9px top 9px / 12px 12px no-repeat,
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) left 9px bottom 9px / 12px 12px no-repeat,
+            radial-gradient(circle, rgba(242, 240, 230, 0.45) 0 2.5px, transparent 3.5px) right 9px bottom 9px / 12px 12px no-repeat,
+            var(--board);
+}
+
+#right-div > .league-container:nth-child(even) {
+    --accent: var(--nl);
+}
+
+#right-div > .league-container:nth-child(2) {
+    --base: 150ms;
+}
+
+.league-container > h2 {
+    margin: 0 0 8px;
+    padding: 4px 0 8px;
+    font-weight: 900;
+    font-size: 2.3rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1;
+    border-bottom: 6px solid var(--accent);     /* painted colour band */
+}
+
+/* ---------- Divisions: sections of the board, split by painted lines ---------- */
+.division-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px 0 6px;
+    border-top: 2px solid var(--seam);
+}
+
+.division-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.division-header > h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.45rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* LED readout */
+.count {
+    min-width: 34px;
+    padding: 0 8px;
+    border: 2px solid var(--paint-dim);
+    border-radius: 2px;
+    background: #000;
+    color: var(--led);
+    font-family: var(--led-font);
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0;
+}
+
+/* ---------- Team rows: a name plate and a line of lettering ---------- */
+.team {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 3px 4px;
+    border-bottom: 1px dashed rgba(242, 240, 230, 0.16);
+    transition: background-color var(--transition);
+}
+
+.team:hover {
+    background-color: rgba(242, 240, 230, 0.07);
+}
+
+.badge {
+    flex: none;
+    width: 54px;
+    padding: 1px 0;
+    border-radius: 2px;
+    background: var(--paint);
+    color: var(--board-deep);
+    font-weight: 900;
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+}
+
+.team > p {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* ---------- Buttons and inputs ---------- */
+.icon-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 2px solid var(--paint-dim);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--paint);
+    font-family: var(--paint-font);
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.icon-btn:hover {
+    background: var(--paint);
+    border-color: var(--paint);
+    color: var(--board-deep);
+}
+
+.icon-btn.remove:hover {
+    background: var(--led-red);
+    border-color: var(--led-red);
+    color: #1a0805;
+}
+
+.icon-btn:active {
+    transform: scale(0.88);
+}
+
+.new-team,
+.new-division {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.new-team-name,
+.new-division-name,
+.game-number {
+    height: 34px;
+    padding: 4px 10px;
+    border: 2px solid var(--paint-dim);
+    border-radius: 2px;
+    background: #000;
+    color: var(--led);
+    font-family: var(--led-font);
+    font-size: 1rem;
+    font-weight: 700;
+    transition: border-color var(--transition);
+}
+
+.new-team > input,
+.new-division > input {
+    flex: 1;
+    min-width: 0;
+}
+
+.new-team-name::placeholder,
+.new-division-name::placeholder {
+    color: rgba(255, 179, 32, 0.4);
+}
+
+.new-team-name:focus,
+.new-division-name:focus,
+.game-number:focus {
+    border-color: var(--led);
+    outline: none;
+}
+
+/* ---------- Season panel ---------- */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-container > h2 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.settings-container > .hint {
+    margin: -8px 0 0;
+    color: var(--paint-dim);
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .settings {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.game-number{
+.settings > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--seam);
+}
+
+.settings > div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.settings label {
+    font-size: 1.15rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.game-number {
+    width: 76px;
+    height: 44px;
+    font-size: 1.6rem;
+    font-weight: 800;
     text-align: center;
-    width: 50px;
 }
 
-.save{
-    width: 100px;
+.game-number:invalid {
+    border-color: var(--led-red);
+    color: var(--led-red);
+}
+
+.save {
+    height: 42px;
+    border: none;
+    border-radius: 2px;
+    background: var(--paint);
+    color: var(--board-deep);
+    font-family: var(--paint-font);
+    font-weight: 900;
+    font-size: 1.2rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.save:hover {
+    background: var(--led);
+}
+
+.save:active {
+    transform: scale(0.97);
+}
+
+/* status: an LED strip */
+.settings-container > .status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 2px solid var(--paint-dim);
+    border-radius: 2px;
+    background: #000;
+    font-family: var(--led-font);
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    animation: status-on 0.4s steps(4, end);
+}
+
+.status::before {
+    content: "";
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.settings-container > .status.valid {
+    color: var(--led-green);
+}
+
+.status.valid::before {
+    background: var(--led-green);
+    box-shadow: 0 0 10px var(--led-green);
+}
+
+.settings-container > .status.invalid {
+    color: var(--led-red);
+}
+
+.status.invalid::before {
+    background: var(--led-red);
+    box-shadow: 0 0 10px var(--led-red);
+    animation: blink 1.2s steps(1, end) infinite;
+}
+
+@keyframes status-on {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes blink {
+    50% { opacity: 0.25; }
+}
+
+/* ---------- Animations ---------- */
+.intro .division-container,
+.intro #left-div {
+    animation: card-in 0.5s ease-out both;
+    animation-delay: calc(var(--base, 0ms) + min(var(--n, 0), 6) * 90ms);
+}
+
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.team.just-added {
+    animation: flash-row 1.6s ease-out;
+}
+
+.division-container.just-added {
+    animation: flash-card 1.6s ease-out;
+}
+
+@keyframes flash-row {
+    0%   { background-color: rgba(255, 179, 32, 0.45); }
+    100% { background-color: transparent; }
+}
+
+@keyframes flash-card {
+    0%   { outline: 2px solid var(--led); outline-offset: 4px; }
+    100% { outline: 2px solid transparent; outline-offset: 4px; }
+}
+
+.removing {
+    animation: fade-out 0.2s ease-in forwards;
+    pointer-events: none;
+}
+
+@keyframes fade-out {
+    to { opacity: 0; transform: translateX(10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header h1 span,
+    .intro .division-container,
+    .intro #left-div,
+    .team.just-added,
+    .division-container.just-added,
+    .removing,
+    .settings-container > .status,
+    .status.invalid::before {
+        animation: none;
+    }
 }
