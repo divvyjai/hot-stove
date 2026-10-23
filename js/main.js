@@ -1,2 +1,3 @@
+splitTitle()
 renderAll()
 validateSeason()

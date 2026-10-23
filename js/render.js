@@ -193,3 +193,17 @@ function renderAll(){
 
     leftContainer.append(renderSettings());
 }
+
+function splitTitle(){
+    const title = document.getElementById("title");
+    const text = title.textContent;
+    title.textContent = "";
+
+    for(let i = 0; i < text.length; i++){
+        const letter = document.createElement("span");
+        letter.textContent = text[i] === " " ? "\u00A0" : text[i];
+        letter.style.setProperty("--i", i);
+        letter.setAttribute("aria-hidden", "true");
+        title.appendChild(letter);
+    }
+}
