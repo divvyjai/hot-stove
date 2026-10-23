@@ -1,4 +1,4 @@
-# Pennant Chase
+# Hot Stove
 
 A fantasy MLB schedule creator.
 
