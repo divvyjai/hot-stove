@@ -18,6 +18,13 @@ function removeWithAnimation(element, removeFn){
     }, 200);
 }
 
+function createBadge(team){
+    const badge = document.createElement("span");
+    badge.classList.add("badge");
+    badge.textContent = team.initials;
+    return badge;
+}
+
 function renderDivision(division, divisionTeams){
     const divisionContainer = document.createElement("div");
     divisionContainer.classList.add("division-container");
@@ -58,10 +65,20 @@ function renderDivision(division, divisionTeams){
             teamContainer.classList.add("just-added");
         }
 
-        const badge = document.createElement("span");
-        badge.classList.add("badge");
-        badge.textContent = team.initials;
-        teamContainer.appendChild(badge);
+        const logoUrl = getLogoUrl(team);
+        if(logoUrl){
+            const logo = document.createElement("img");
+            logo.classList.add("team-logo");
+            logo.src = logoUrl;
+            logo.alt = "";                 // decorative: the team name is right beside it
+            logo.width = 32;
+            logo.height = 32;
+            // if the image can't load (offline, wrong ID...) fall back to the initials patch
+            logo.addEventListener("error", () => logo.replaceWith(createBadge(team)));
+            teamContainer.appendChild(logo);
+        } else {
+            teamContainer.appendChild(createBadge(team));
+        }
 
         const teamHeader = document.createElement("p");
         teamHeader.textContent = team.name;

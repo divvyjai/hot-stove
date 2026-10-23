@@ -14,46 +14,41 @@ const divisions = [
 
 const teams = [
     // NL West (division 1)
-    { id:1,  initials:"AZ",  name:"Arizona Diamondbacks",  shortName:"Diamondbacks", logo:"images/PLACEHOLDER.png", divisionId:1 },
-    { id:2,  initials:"COL", name:"Colorado Rockies",      shortName:"Rockies",      logo:"images/PLACEHOLDER.png", divisionId:1 },
-    { id:3,  initials:"LAD", name:"Los Angeles Dodgers",   shortName:"Dodgers",      logo:"images/PLACEHOLDER.png", divisionId:1 },
-    { id:4,  initials:"SD",  name:"San Diego Padres",      shortName:"Padres",       logo:"images/PLACEHOLDER.png", divisionId:1 },
-    { id:5,  initials:"SF",  name:"San Francisco Giants",  shortName:"Giants",       logo:"images/PLACEHOLDER.png", divisionId:1 },
-
+    { id:1,  initials:"AZ",  name:"Arizona Diamondbacks",  shortName:"Diamondbacks", mlbId:109, divisionId:1 },
+    { id:2,  initials:"COL", name:"Colorado Rockies",      shortName:"Rockies",      mlbId:115, divisionId:1 },
+    { id:3,  initials:"LAD", name:"Los Angeles Dodgers",   shortName:"Dodgers",      mlbId:119, divisionId:1 },
+    { id:4,  initials:"SD",  name:"San Diego Padres",      shortName:"Padres",       mlbId:135, divisionId:1 },
+    { id:5,  initials:"SF",  name:"San Francisco Giants",  shortName:"Giants",       mlbId:137, divisionId:1 },
     // NL Central (division 2)
-    { id:6,  initials:"CHC", name:"Chicago Cubs",          shortName:"Cubs",         logo:"images/PLACEHOLDER.png", divisionId:2 },
-    { id:7,  initials:"CIN", name:"Cincinnati Reds",       shortName:"Reds",         logo:"images/PLACEHOLDER.png", divisionId:2 },
-    { id:8,  initials:"MIL", name:"Milwaukee Brewers",     shortName:"Brewers",      logo:"images/PLACEHOLDER.png", divisionId:2 },
-    { id:9,  initials:"PIT", name:"Pittsburgh Pirates",    shortName:"Pirates",      logo:"images/PLACEHOLDER.png", divisionId:2 },
-    { id:10, initials:"STL", name:"St. Louis Cardinals",   shortName:"Cardinals",    logo:"images/PLACEHOLDER.png", divisionId:2 },
-
+    { id:6,  initials:"CHC", name:"Chicago Cubs",          shortName:"Cubs",         mlbId:112, divisionId:2 },
+    { id:7,  initials:"CIN", name:"Cincinnati Reds",       shortName:"Reds",         mlbId:113, divisionId:2 },
+    { id:8,  initials:"MIL", name:"Milwaukee Brewers",     shortName:"Brewers",      mlbId:158, divisionId:2 },
+    { id:9,  initials:"PIT", name:"Pittsburgh Pirates",    shortName:"Pirates",      mlbId:134, divisionId:2 },
+    { id:10, initials:"STL", name:"St. Louis Cardinals",   shortName:"Cardinals",    mlbId:138, divisionId:2 },
     // NL East (division 3)
-    { id:11, initials:"ATL", name:"Atlanta Braves",        shortName:"Braves",       logo:"images/PLACEHOLDER.png", divisionId:3 },
-    { id:12, initials:"MIA", name:"Miami Marlins",         shortName:"Marlins",      logo:"images/PLACEHOLDER.png", divisionId:3 },
-    { id:13, initials:"NYM", name:"New York Mets",         shortName:"Mets",         logo:"images/PLACEHOLDER.png", divisionId:3 },
-    { id:14, initials:"PHI", name:"Philadelphia Phillies", shortName:"Phillies",     logo:"images/PLACEHOLDER.png", divisionId:3 },
-    { id:15, initials:"WSH", name:"Washington Nationals",  shortName:"Nationals",    logo:"images/PLACEHOLDER.png", divisionId:3 },
-
+    { id:11, initials:"ATL", name:"Atlanta Braves",        shortName:"Braves",       mlbId:144, divisionId:3 },
+    { id:12, initials:"MIA", name:"Miami Marlins",         shortName:"Marlins",      mlbId:146, divisionId:3 },
+    { id:13, initials:"NYM", name:"New York Mets",         shortName:"Mets",         mlbId:121, divisionId:3 },
+    { id:14, initials:"PHI", name:"Philadelphia Phillies", shortName:"Phillies",     mlbId:143, divisionId:3 },
+    { id:15, initials:"WSH", name:"Washington Nationals",  shortName:"Nationals",    mlbId:120, divisionId:3 },
     // AL West (division 4)
-    { id:16, initials:"HOU", name:"Houston Astros",        shortName:"Astros",       logo:"images/PLACEHOLDER.png", divisionId:4 },
-    { id:17, initials:"LAA", name:"Los Angeles Angels",    shortName:"Angels",       logo:"images/PLACEHOLDER.png", divisionId:4 },
-    { id:18, initials:"ATH", name:"Oakland Athletics",     shortName:"Athletics",    logo:"images/PLACEHOLDER.png", divisionId:4 },
-    { id:19, initials:"SEA", name:"Seattle Mariners",      shortName:"Mariners",     logo:"images/PLACEHOLDER.png", divisionId:4 },
-    { id:20, initials:"TEX", name:"Texas Rangers",         shortName:"Rangers",      logo:"images/PLACEHOLDER.png", divisionId:4 },
-
+    { id:16, initials:"HOU", name:"Houston Astros",        shortName:"Astros",       mlbId:117, divisionId:4 },
+    { id:17, initials:"LAA", name:"Los Angeles Angels",    shortName:"Angels",       mlbId:108, divisionId:4 },
+    { id:18, initials:"ATH", name:"Oakland Athletics",     shortName:"Athletics",    mlbId:133, divisionId:4 },
+    { id:19, initials:"SEA", name:"Seattle Mariners",      shortName:"Mariners",     mlbId:136, divisionId:4 },
+    { id:20, initials:"TEX", name:"Texas Rangers",         shortName:"Rangers",      mlbId:140, divisionId:4 },
     // AL Central (division 5)
-    { id:21, initials:"CWS", name:"Chicago White Sox",     shortName:"White Sox",    logo:"images/PLACEHOLDER.png", divisionId:5 },
-    { id:22, initials:"CLE", name:"Cleveland Guardians",   shortName:"Guardians",    logo:"images/PLACEHOLDER.png", divisionId:5 },
-    { id:23, initials:"DET", name:"Detroit Tigers",        shortName:"Tigers",       logo:"images/PLACEHOLDER.png", divisionId:5 },
-    { id:24, initials:"KC",  name:"Kansas City Royals",    shortName:"Royals",       logo:"images/PLACEHOLDER.png", divisionId:5 },
-    { id:25, initials:"MIN", name:"Minnesota Twins",       shortName:"Twins",        logo:"images/PLACEHOLDER.png", divisionId:5 },
-
+    { id:21, initials:"CWS", name:"Chicago White Sox",     shortName:"White Sox",    mlbId:145, divisionId:5 },
+    { id:22, initials:"CLE", name:"Cleveland Guardians",   shortName:"Guardians",    mlbId:114, divisionId:5 },
+    { id:23, initials:"DET", name:"Detroit Tigers",        shortName:"Tigers",       mlbId:116, divisionId:5 },
+    { id:24, initials:"KC",  name:"Kansas City Royals",    shortName:"Royals",       mlbId:118, divisionId:5 },
+    { id:25, initials:"MIN", name:"Minnesota Twins",       shortName:"Twins",        mlbId:142, divisionId:5 },
     // AL East (division 6)
-    { id:26, initials:"BAL", name:"Baltimore Orioles",     shortName:"Orioles",      logo:"images/PLACEHOLDER.png", divisionId:6 },
-    { id:27, initials:"BOS", name:"Boston Red Sox",        shortName:"Red Sox",      logo:"images/PLACEHOLDER.png", divisionId:6 },
-    { id:28, initials:"NYY", name:"New York Yankees",      shortName:"Yankees",      logo:"images/PLACEHOLDER.png", divisionId:6 },
-    { id:29, initials:"TB",  name:"Tampa Bay Rays",        shortName:"Rays",         logo:"images/PLACEHOLDER.png", divisionId:6 },
-    { id:30, initials:"TOR", name:"Toronto Blue Jays",     shortName:"Blue Jays",    logo:"images/PLACEHOLDER.png", divisionId:6 }
+    { id:26, initials:"BAL", name:"Baltimore Orioles",     shortName:"Orioles",      mlbId:110, divisionId:6 },
+    { id:27, initials:"BOS", name:"Boston Red Sox",        shortName:"Red Sox",      mlbId:111, divisionId:6 },
+    { id:28, initials:"NYY", name:"New York Yankees",      shortName:"Yankees",      mlbId:147, divisionId:6 },
+    { id:29, initials:"TB",  name:"Tampa Bay Rays",        shortName:"Rays",         mlbId:139, divisionId:6 },
+    { id:30, initials:"TOR", name:"Toronto Blue Jays",     shortName:"Blue Jays",    mlbId:141, divisionId:6 }
 ]
 
 const league = {leagues, divisions, teams}
@@ -61,6 +56,16 @@ const seasonSettings = {divisionGames: 13, leagueGames: 8, interleagueGames: 2}
 const MAX_SERIES_LENGTH = 4;
 let nextTeamId = 31;
 let nextDivisionId = 7;
+
+function getLogoUrl(team){
+    if(team.logo){
+        return team.logo;
+    }
+    if(team.mlbId !== undefined){
+        return "https://www.mlbstatic.com/team-logos/team-cap-on-dark/" + team.mlbId + ".svg";
+    }
+    return null;
+}
 
 function teamsByDivision(divisions, teams) {
     const finalList = {};

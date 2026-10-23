@@ -226,6 +226,13 @@ body {
     text-align: center;
 }
 
+.team-logo {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
 .team > p {
     flex: 1;
     min-width: 0;
