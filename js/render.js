@@ -227,6 +227,11 @@ function renderSettings(){
     interleagueContainer.appendChild(interleagueLabel);
     interleagueContainer.appendChild(interleagueNumber);
 
+    const wipContainer = document.createElement("div");
+    const wipLabel = document.createElement("label");
+    wipLabel.textContent = "WIP: Randomly generated calendar based off these settings";
+    wipContainer.appendChild(wipLabel);
+
     for(const input of [divisionNumber, leagueNumber, interleagueNumber]){
         input.min = 0;
         input.step = 1;
@@ -236,6 +241,7 @@ function renderSettings(){
     settingsContainer.appendChild(divisionContainer);
     settingsContainer.appendChild(leagueContainer);
     settingsContainer.appendChild(interleagueContainer);
+
     container.appendChild(settingsContainer);
 
     const saveButton = document.createElement("button");
@@ -260,6 +266,8 @@ function renderSettings(){
     seasonValidate.classList.add("status", status.valid ? "valid" : "invalid");
     seasonValidate.textContent = status.message;
     container.appendChild(seasonValidate);
+
+    container.appendChild(wipContainer);
 
     return container;
 }
