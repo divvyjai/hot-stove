@@ -17,4 +17,4 @@ unimplemented.
 
 ## AI Usage
 
-The majority of the CSS styling was done using AI. Almost all of the HTML and Javascript however was written by me, with some AI assistance.
+The majority of the CSS styling was done using AI. Almost all of the HTML and Javascript however was written by me, with some AI assistance here and there.
