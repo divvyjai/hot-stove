@@ -51,8 +51,17 @@ const teams = [
     { id:30, initials:"TOR", name:"Toronto Blue Jays",     shortName:"Blue Jays",    mlbId:141, divisionId:6 }
 ]
 
+const seasonSettings = {
+    divisionGames: 13,
+    leagueGames: 8,
+    interleagueGames: 2,
+    startDate: "2027-03-25",
+    endDate: "2027-09-26",
+    blackoutDays: ["2027-07-12", "2027-07-13", "2027-07-14"]
+}
+
 const league = {leagues, divisions, teams}
-const seasonSettings = {divisionGames: 13, leagueGames: 8, interleagueGames: 2}
+
 const MAX_SERIES_LENGTH = 4;
 let nextTeamId = 31;
 let nextDivisionId = 7;

@@ -244,18 +244,48 @@ function renderSettings(){
 
     container.appendChild(settingsContainer);
 
+    const startDateContainer = document.createElement("div");
+    const startDateLabel = document.createElement("label");
+    startDateLabel.textContent = "Start Date";
+    startDateContainer.appendChild(startDateLabel);
+    const startDate = document.createElement("input");
+    startDate.type = "date";
+    startDate.value = seasonSettings.startDate;
+    startDateContainer.appendChild(startDateLabel);
+    startDateContainer.appendChild(startDate);
+
+    const endDateContainer = document.createElement("div");
+    const endDateLabel = document.createElement("label");
+    endDateLabel.textContent = "End Date";
+    endDateContainer.appendChild(endDateLabel);
+    const endDate = document.createElement("input");
+    endDate.type = "date";
+    endDate.value = seasonSettings.endDate;
+    endDateContainer.appendChild(endDateLabel);
+    endDateContainer.appendChild(endDate);
+
+    settingsContainer.appendChild(startDateContainer);
+    settingsContainer.appendChild(endDateContainer);
+
     const saveButton = document.createElement("button");
     saveButton.textContent = "Save";
     saveButton.classList.add("save");
     saveButton.addEventListener("click", () => {
         const values = [divisionNumber, leagueNumber, interleagueNumber].map(input => input.valueAsNumber);
+
         if(values.some(value => !Number.isInteger(value) || value < 0)){
+            return;
+        }
+
+        if(startDate.value === "" || endDate.value === "" || startDate.value >= endDate.value){
             return;
         }
 
         seasonSettings.divisionGames = values[0];
         seasonSettings.leagueGames = values[1];
         seasonSettings.interleagueGames = values[2];
+        seasonSettings.startDate = startDate.value;
+        seasonSettings.endDate = endDate.value;
 
         renderAll();
     })
