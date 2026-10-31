@@ -1,6 +1,7 @@
 // What was just added ("team-31", "division-7"), so the next render can highlight it.
 // renderAll() clears it, so the highlight only plays once.
 let justAdded = null;
+let currentPage = "teams";
 
 // Plays a short fade-out on the element, then removes the data and redraws.
 function removeWithAnimation(element, removeFn){
@@ -302,20 +303,64 @@ function renderSettings(){
     return container;
 }
 
-function renderAll(){
+function renderNav(){
+    const navbar = document.createElement("div");
+    const teamButton = document.createElement("button");
+    teamButton.classList.add("active");
+    const scheduleButton = document.createElement("button");
+
+    teamButton.addEventListener("click", () => {
+        currentPage = "teams";
+        teamButton.classList.add("active");
+        scheduleButton.classList.remove("active");
+        renderAll();
+    })
+
+    scheduleButton.addEventListener("click", () => {
+        currentPage = "schedule";
+        scheduleButton.classList.add("active");
+        teamButton.classList.remove("active");
+        renderAll();
+    })
+
+    navbar.appendChild(teamButton);
+    navbar.appendChild(scheduleButton);
+
+    return navbar;
+}
+
+function renderSchedule(){
+    const container = document.createElement("div");
+    const placeholder = document.createElement("p");
+    placeholder.textContent = "Placeholder";
+    container.appendChild(placeholder);
+
+    return container;
+}
+
+function renderAll() {
+    const navbar = document.getElementById("navbar");
     const rightContainer = document.getElementById("right-div");
     const leftContainer = document.getElementById("left-div");
+
     rightContainer.textContent = "";
     leftContainer.textContent = "";
+    navbar.textContent = "";
 
-    const teamsByDiv = teamsByDivision(divisions, teams);
-    for(const league of leagues){
-        rightContainer.append(renderLeague(league, teamsByDiv));
+    navbar.appendChild(renderNav());
+
+    if (currentPage === "teams") {
+        const teamsByDiv = teamsByDivision(divisions, teams);
+        for (const league of leagues) {
+            rightContainer.append(renderLeague(league, teamsByDiv));
+        }
+
+        leftContainer.append(renderSettings());
+
+        justAdded = null;
+    } else if (currentPage === "schedule") {
+        leftContainer.appendChild(renderSchedule());
     }
-
-    leftContainer.append(renderSettings());
-
-    justAdded = null;
 }
 
 function splitTitle(){
