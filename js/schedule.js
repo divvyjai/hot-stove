@@ -168,3 +168,11 @@ function gamesByDate(schedule, startDate){
 
     return byDate;
 }
+
+function generateSchedule(seed) {
+    const series = generateSeries(generateMatchups());
+    const schedule = scheduleSeries(series, seasonSettings, seed);
+    const dates = gamesByDate(schedule, seasonSettings.startDate);
+
+    return {schedule, dates, seed};
+}

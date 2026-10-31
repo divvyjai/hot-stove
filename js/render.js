@@ -2,6 +2,8 @@
 // renderAll() clears it, so the highlight only plays once.
 let justAdded = null;
 let currentPage = "teams";
+let seed = Math.floor(Math.random() * 1000000);
+let currentSchedule = generateSchedule(seed);
 
 // Plays a short fade-out on the element, then removes the data and redraws.
 function removeWithAnimation(element, removeFn){
@@ -337,9 +339,51 @@ function renderNav(){
 
 function renderSchedule(){
     const container = document.createElement("div");
-    const placeholder = document.createElement("p");
-    placeholder.textContent = "Placeholder";
-    container.appendChild(placeholder);
+    const generateButton = document.createElement("button");
+
+    const seedInput = document.createElement("input");
+    const seedLabel = document.createElement("label");
+    seedLabel.textContent = "Seed";
+    seedInput.type = "number";
+    seedInput.value = seed.toString();
+    container.appendChild(seedLabel);
+    container.appendChild(seedInput);
+
+    const gameDays = Object.keys(currentSchedule.dates).sort();
+    const lastGameDay = gameDays[gameDays.length - 1];
+    const placedGames = currentSchedule.schedule.placed.length;
+    const unplacedGames = currentSchedule.schedule.unplaced.length;
+
+    const scheduleLabel = document.createElement("label");
+    scheduleLabel.textContent = "Schedule Overview";
+    const scheduleOverview = document.createElement("p");
+    scheduleOverview.textContent = "Placed: " + placedGames + ", Unplaced: " + unplacedGames + ", Last Gameday: " + lastGameDay;
+
+    const unplacedWarning = document.createElement("p");
+    unplacedWarning.textContent = unplacedGames > 0 ? "Warning! There are " + currentSchedule.schedule.unplaced.length + " unplaced games" :
+                                                      "No unplaced games";
+
+    container.appendChild(scheduleLabel);
+    container.appendChild(scheduleOverview);
+    container.appendChild(unplacedWarning);
+
+    return container;
+}
+
+function renderCalendar() {
+    const container = document.createElement("div");
+
+    const date = currentSchedule.dates["2027-03-27"];
+
+    for(const game of date){
+        const placeholder = document.createElement("p");
+
+        const homeTeam = teams.find(team => team.id === game.home);
+        const awayTeam = teams.find(team => team.id === game.away);
+
+        placeholder.textContent = awayTeam.initials + " @ " + homeTeam.initials;
+        container.appendChild(placeholder);
+    }
 
     return container;
 }
@@ -366,6 +410,7 @@ function renderAll() {
         justAdded = null;
     } else if (currentPage === "schedule") {
         leftContainer.appendChild(renderSchedule());
+        rightContainer.appendChild(renderCalendar());
     }
 }
 
