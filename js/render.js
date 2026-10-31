@@ -306,22 +306,28 @@ function renderSettings(){
 function renderNav(){
     const navbar = document.createElement("div");
     const teamButton = document.createElement("button");
-    teamButton.classList.add("active");
     const scheduleButton = document.createElement("button");
+
+    teamButton.textContent = "Teams";
+    scheduleButton.textContent = "Schedule";
 
     teamButton.addEventListener("click", () => {
         currentPage = "teams";
-        teamButton.classList.add("active");
-        scheduleButton.classList.remove("active");
         renderAll();
     })
 
     scheduleButton.addEventListener("click", () => {
         currentPage = "schedule";
-        scheduleButton.classList.add("active");
-        teamButton.classList.remove("active");
         renderAll();
     })
+
+    if(currentPage === "teams"){
+        teamButton.classList.add("active");
+        teamButton.setAttribute("aria-current", "page");
+    } else {
+        scheduleButton.classList.add("active");
+        scheduleButton.setAttribute("aria-current", "page");
+    }
 
     navbar.appendChild(teamButton);
     navbar.appendChild(scheduleButton);
