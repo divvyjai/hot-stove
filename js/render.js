@@ -52,6 +52,7 @@ function renderDivision(division, divisionTeams){
     removeButton.textContent = "X";
     removeButton.addEventListener("click", () => {
         removeWithAnimation(divisionContainer, () => removeDivision(division.id));
+        currentSchedule = null;
     })
 
     divisionHeader.appendChild(removeButton);
@@ -92,6 +93,7 @@ function renderDivision(division, divisionTeams){
         removeButton.textContent = "X";
         removeButton.addEventListener("click", () => {
             removeWithAnimation(teamContainer, () => removeTeam(team.id));
+            currentSchedule = null;
         })
 
         teamContainer.appendChild(removeButton);
@@ -113,6 +115,7 @@ function renderDivision(division, divisionTeams){
         const name = newTeamName.value.trim();
         if(name !== ""){
             const newTeam = addTeam(division.id, name);
+            currentSchedule = null;
             justAdded = "team-" + newTeam.id;
             renderAll();
         }
@@ -163,6 +166,7 @@ function renderLeague(league, teamsByDiv){
         const name = newDivisionName.value.trim();
         if(name !== ""){
             const newDivision = addDivision(league.id, name);
+            currentSchedule = null;
             justAdded = "division-" + newDivision.id;
             renderAll();
         }
@@ -229,10 +233,9 @@ function renderSettings(){
     interleagueContainer.appendChild(interleagueLabel);
     interleagueContainer.appendChild(interleagueNumber);
 
-    const wipContainer = document.createElement("div");
-    const wipLabel = document.createElement("label");
-    wipLabel.textContent = "WIP: Randomly generated calendar based off these settings";
-    wipContainer.appendChild(wipLabel);
+    const wipNote = document.createElement("p");
+    wipNote.classList.add("note");
+    wipNote.textContent = "WIP: Randomly generated calendar based off these settings";
 
     for(const input of [divisionNumber, leagueNumber, interleagueNumber]){
         input.min = 0;
@@ -249,20 +252,20 @@ function renderSettings(){
     const startDateContainer = document.createElement("div");
     const startDateLabel = document.createElement("label");
     startDateLabel.textContent = "Start Date";
-    startDateContainer.appendChild(startDateLabel);
     const startDate = document.createElement("input");
     startDate.type = "date";
     startDate.value = seasonSettings.startDate;
+    startDate.className = "date-input";
     startDateContainer.appendChild(startDateLabel);
     startDateContainer.appendChild(startDate);
 
     const endDateContainer = document.createElement("div");
     const endDateLabel = document.createElement("label");
     endDateLabel.textContent = "End Date";
-    endDateContainer.appendChild(endDateLabel);
     const endDate = document.createElement("input");
     endDate.type = "date";
     endDate.value = seasonSettings.endDate;
+    endDate.className = "date-input";
     endDateContainer.appendChild(endDateLabel);
     endDateContainer.appendChild(endDate);
 
@@ -288,6 +291,7 @@ function renderSettings(){
         seasonSettings.interleagueGames = values[2];
         seasonSettings.startDate = startDate.value;
         seasonSettings.endDate = endDate.value;
+        currentSchedule = null;
 
         renderAll();
     })
@@ -299,13 +303,16 @@ function renderSettings(){
     seasonValidate.textContent = status.message;
     container.appendChild(seasonValidate);
 
-    container.appendChild(wipContainer);
+    container.appendChild(wipNote);
 
     return container;
 }
 
 function renderNav(){
-    const navbar = document.createElement("div");
+    const navbar = document.createElement("nav");
+    navbar.classList.add("nav");
+    navbar.setAttribute("aria-label", "Pages");
+
     const teamButton = document.createElement("button");
     const scheduleButton = document.createElement("button");
 
@@ -338,44 +345,83 @@ function renderNav(){
 
 function renderSchedule(){
     const container = document.createElement("div");
-    const generateButton = document.createElement("button");
+    container.classList.add("settings-container");
 
-    const seedInput = document.createElement("input");
+    const scheduleHeading = document.createElement("h2");
+    scheduleHeading.textContent = "Schedule";
+    container.appendChild(scheduleHeading);
+
+    const scheduleHint = document.createElement("p");
+    scheduleHint.classList.add("hint");
+    scheduleHint.textContent = "Same seed, same schedule. Clear it for a random one";
+    container.appendChild(scheduleHint);
+
+    const gameDays = Object.keys(currentSchedule.dates).sort();
+    const lastGameDay = gameDays.length > 0 ? gameDays[gameDays.length - 1] : "None";
+    const placedSeries = currentSchedule.schedule.placed.length;
+    const unplacedSeries = currentSchedule.schedule.unplaced.length;
+
+    const rows = document.createElement("div");
+    rows.classList.add("settings");
+
+    const seedRow = document.createElement("div");
     const seedLabel = document.createElement("label");
     seedLabel.textContent = "Seed";
+    seedLabel.htmlFor = "seed-input";
+    const seedInput = document.createElement("input");
+    seedInput.id = "seed-input";
     seedInput.type = "number";
+    seedInput.min = 0;
+    seedInput.step = 1;
+    seedInput.className = "seed-input";
     seedInput.value = currentSchedule.seed.toString();
-    container.appendChild(seedLabel);
-    container.appendChild(seedInput);
+    seedRow.appendChild(seedLabel);
+    seedRow.appendChild(seedInput);
+    rows.appendChild(seedRow);
 
+    const stats = [
+        {label: "Series placed", value: placedSeries, bad: false},
+        {label: "Unplaced", value: unplacedSeries, bad: unplacedSeries > 0},
+        {label: "Last game day", value: lastGameDay, bad: false}
+    ];
+
+    for(const stat of stats){
+        const row = document.createElement("div");
+        const label = document.createElement("span");
+        label.classList.add("stat-label");
+        label.textContent = stat.label;
+        const value = document.createElement("span");
+        value.classList.add("count");
+        if(stat.bad){
+            value.classList.add("bad");
+        }
+        value.textContent = stat.value;
+        row.appendChild(label);
+        row.appendChild(value);
+        rows.appendChild(row);
+    }
+
+    container.appendChild(rows);
+
+    const generateButton = document.createElement("button");
+    generateButton.textContent = "Generate";
+    generateButton.classList.add("generate");
     generateButton.addEventListener("click", () => {
         let seed = seedInput.valueAsNumber;
-        if(seed === null){
+        if(!Number.isInteger(seed) || seed < 0){
             seed = Math.floor(Math.random() * 1000000);
         }
 
         currentSchedule = generateSchedule(seed);
         renderAll();
     })
-
     container.appendChild(generateButton);
 
-    const gameDays = Object.keys(currentSchedule.dates).sort();
-    const lastGameDay = gameDays[gameDays.length - 1];
-    const placedGames = currentSchedule.schedule.placed.length;
-    const unplacedGames = currentSchedule.schedule.unplaced.length;
-
-    const scheduleLabel = document.createElement("label");
-    scheduleLabel.textContent = "Schedule Overview";
-    const scheduleOverview = document.createElement("p");
-    scheduleOverview.textContent = "Placed: " + placedGames + ", Unplaced: " + unplacedGames + ", Last Gameday: " + lastGameDay;
-
     const unplacedWarning = document.createElement("p");
-    unplacedWarning.textContent = unplacedGames > 0 ? "Warning! There are " + currentSchedule.schedule.unplaced.length + " unplaced games" :
-                                                      "No unplaced games";
-
-    container.appendChild(scheduleLabel);
-    container.appendChild(scheduleOverview);
+    unplacedWarning.classList.add("status", unplacedSeries > 0 ? "invalid" : "valid");
+    unplacedWarning.textContent = unplacedSeries > 0 ?
+        unplacedSeries + " series could not be placed. Try a longer season" :
+        "Every series placed";
     container.appendChild(unplacedWarning);
 
     return container;
@@ -383,18 +429,50 @@ function renderSchedule(){
 
 function renderCalendar() {
     const container = document.createElement("div");
+    container.classList.add("calendar-container");
 
-    const date = currentSchedule.dates["2027-03-27"];
+    const day = "2027-03-27";
+    const games = currentSchedule.dates[day] || [];
 
-    for(const game of date){
-        const placeholder = document.createElement("p");
+    const heading = document.createElement("h2");
+    heading.textContent = "Games";
+    const dayChip = document.createElement("span");
+    dayChip.classList.add("count");
+    dayChip.textContent = day;
+    heading.appendChild(dayChip);
+    container.appendChild(heading);
 
+    if(games.length === 0){
+        const empty = document.createElement("p");
+        empty.classList.add("calendar-empty");
+        empty.textContent = "No games on this day";
+        container.appendChild(empty);
+
+        return container;
+    }
+
+    const list = document.createElement("ul");
+    list.classList.add("games-list");
+
+    for(const game of games){
         const homeTeam = teams.find(team => team.id === game.home);
         const awayTeam = teams.find(team => team.id === game.away);
 
-        placeholder.textContent = awayTeam.initials + " @ " + homeTeam.initials;
-        container.appendChild(placeholder);
+        const item = document.createElement("li");
+        item.classList.add("game");
+        item.title = awayTeam.name + " at " + homeTeam.name;
+
+        const at = document.createElement("span");
+        at.classList.add("at");
+        at.textContent = "@";
+
+        item.appendChild(createBadge(awayTeam));
+        item.appendChild(at);
+        item.appendChild(createBadge(homeTeam));
+        list.appendChild(item);
     }
+
+    container.appendChild(list);
 
     return container;
 }
