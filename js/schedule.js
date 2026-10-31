@@ -147,3 +147,24 @@ function scheduleSeries(series, settings, seed){
 
     return {placed, unplaced, seasonDays: totalDays, seed};
 }
+
+function gamesByDate(schedule, startDate){
+    const byDate = {};
+
+    for(const p of schedule.placed){
+        for(let i = 0; i < p.games; i++){
+            const gameDate = dayToDate(startDate, p.startDay + i);
+            if(byDate[gameDate] === undefined){
+                byDate[gameDate] = [];
+            }
+
+            byDate[gameDate].push({
+                home: p.home,
+                away: p.away,
+                gameInSeries: i + 1
+            });
+        }
+    }
+
+    return byDate;
+}
