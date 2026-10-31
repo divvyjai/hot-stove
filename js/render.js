@@ -2,8 +2,7 @@
 // renderAll() clears it, so the highlight only plays once.
 let justAdded = null;
 let currentPage = "teams";
-let seed = Math.floor(Math.random() * 1000000);
-let currentSchedule = generateSchedule(seed);
+let currentSchedule = null;
 
 // Plays a short fade-out on the element, then removes the data and redraws.
 function removeWithAnimation(element, removeFn){
@@ -345,9 +344,21 @@ function renderSchedule(){
     const seedLabel = document.createElement("label");
     seedLabel.textContent = "Seed";
     seedInput.type = "number";
-    seedInput.value = seed.toString();
+    seedInput.value = currentSchedule.seed.toString();
     container.appendChild(seedLabel);
     container.appendChild(seedInput);
+
+    generateButton.addEventListener("click", () => {
+        let seed = seedInput.valueAsNumber;
+        if(seed === null){
+            seed = Math.floor(Math.random() * 1000000);
+        }
+
+        currentSchedule = generateSchedule(seed);
+        renderAll();
+    })
+
+    container.appendChild(generateButton);
 
     const gameDays = Object.keys(currentSchedule.dates).sort();
     const lastGameDay = gameDays[gameDays.length - 1];
@@ -409,6 +420,10 @@ function renderAll() {
 
         justAdded = null;
     } else if (currentPage === "schedule") {
+        if(currentSchedule === null){
+            currentSchedule = generateSchedule(Math.floor(Math.random() * 1000000));
+        }
+
         leftContainer.appendChild(renderSchedule());
         rightContainer.appendChild(renderCalendar());
     }
