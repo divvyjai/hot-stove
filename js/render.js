@@ -3,6 +3,10 @@
 let justAdded = null;
 let currentPage = "teams";
 let currentSchedule = null;
+let calendarYear = null;
+let calendarMonth = null;
+let selectedDate = null;
+const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 // Plays a short fade-out on the element, then removes the data and redraws.
 function removeWithAnimation(element, removeFn){
@@ -18,6 +22,12 @@ function removeWithAnimation(element, removeFn){
         removeFn();
         renderAll();
     }, 200);
+}
+
+function resetCalendarView(){
+    calendarYear = null;
+    calendarMonth = null;
+    selectedDate = null;
 }
 
 function createBadge(team){
@@ -427,18 +437,148 @@ function renderSchedule(){
     return container;
 }
 
+function renderMonthGrid(){
+    if(calendarYear === null){
+        const startParts = seasonSettings.startDate.split("-").map(Number);
+        calendarYear = startParts[0];
+        calendarMonth = startParts[1];
+    }
+
+    if(selectedDate === null){
+        const gameDays = Object.keys(currentSchedule.dates).sort();
+        selectedDate = gameDays.length > 0 ? gameDays[0] : null;
+    }
+
+    const startParts = seasonSettings.startDate.split("-").map(Number);
+    const endParts = seasonSettings.endDate.split("-").map(Number);
+    const viewing = calendarYear * 12 + calendarMonth;
+    const atFirstMonth = viewing <= startParts[0] * 12 + startParts[1];
+    const atLastMonth = viewing >= endParts[0] * 12 + endParts[1];
+
+    const container = document.createElement("div");
+    container.classList.add("calendar-container", "month-container");
+
+    const header = document.createElement("div");
+    header.classList.add("month-header");
+
+    const previousButton = document.createElement("button");
+    previousButton.classList.add("icon-btn", "month-nav");
+    previousButton.textContent = "<";
+    previousButton.setAttribute("aria-label", "Previous month");
+    previousButton.disabled = atFirstMonth;
+    previousButton.addEventListener("click", () => {
+        const shifted = shiftMonth(calendarYear, calendarMonth, -1);
+        calendarYear = shifted.year;
+        calendarMonth = shifted.month;
+        renderAll();
+    })
+
+    const nextButton = document.createElement("button");
+    nextButton.classList.add("icon-btn", "month-nav");
+    nextButton.textContent = ">";
+    nextButton.setAttribute("aria-label", "Next month");
+    nextButton.disabled = atLastMonth;
+    nextButton.addEventListener("click", () => {
+        const shifted = shiftMonth(calendarYear, calendarMonth, 1);
+        calendarYear = shifted.year;
+        calendarMonth = shifted.month;
+        renderAll();
+    })
+
+    const title = document.createElement("h2");
+    title.textContent = getFriendlyTitle(calendarYear, calendarMonth);
+
+    header.appendChild(previousButton);
+    header.appendChild(title);
+    header.appendChild(nextButton);
+    container.appendChild(header);
+
+    const weekdays = document.createElement("div");
+    weekdays.classList.add("weekdays");
+    for(const name of WEEKDAYS){
+        const weekday = document.createElement("span");
+        weekday.textContent = name;
+        weekdays.appendChild(weekday);
+    }
+    container.appendChild(weekdays);
+
+    const days = document.createElement("div");
+    days.classList.add("days");
+
+    const leading = firstWeekday(calendarYear, calendarMonth);
+    for(let i = 0; i < leading; i++){
+        const empty = document.createElement("div");
+        empty.classList.add("day", "empty");
+        days.appendChild(empty);
+    }
+
+    const monthText = String(calendarMonth).padStart(2, "0");
+    const lastDay = daysInMonth(calendarYear, calendarMonth);
+
+    for(let day = 1; day <= lastDay; day++){
+        const dateKey = calendarYear + "-" + monthText + "-" + String(day).padStart(2, "0");
+        const games = currentSchedule.dates[dateKey];
+        const inSeason = dateKey >= seasonSettings.startDate && dateKey <= seasonSettings.endDate;
+
+        const number = document.createElement("span");
+        number.classList.add("day-number");
+        number.textContent = day;
+
+        let cell;
+        if(games !== undefined){
+            cell = document.createElement("button");
+            cell.classList.add("day", "has-games");
+            cell.setAttribute("aria-label", day + " " + MONTH_NAMES[calendarMonth - 1] + ", " + games.length + " games");
+            cell.setAttribute("aria-pressed", dateKey === selectedDate ? "true" : "false");
+            if(dateKey === selectedDate){
+                cell.classList.add("selected");
+            }
+
+            const gameCount = document.createElement("span");
+            gameCount.classList.add("day-games");
+            gameCount.textContent = games.length;
+
+            cell.appendChild(number);
+            cell.appendChild(gameCount);
+            cell.addEventListener("click", () => {
+                selectedDate = dateKey;
+                renderAll();
+            })
+        } else {
+            cell = document.createElement("div");
+            cell.classList.add("day");
+            cell.appendChild(number);
+
+            if(!inSeason){
+                cell.classList.add("out");
+            } else if(seasonSettings.blackoutDays.includes(dateKey)){
+                cell.classList.add("break");
+                const label = document.createElement("span");
+                label.classList.add("day-note");
+                label.textContent = "Break";
+                cell.appendChild(label);
+            }
+        }
+
+        days.appendChild(cell);
+    }
+
+    container.appendChild(days);
+
+    return container;
+}
+
 function renderCalendar() {
     const container = document.createElement("div");
     container.classList.add("calendar-container");
 
-    const day = "2027-03-27";
-    const games = currentSchedule.dates[day] || [];
+    const games = (selectedDate !== null && currentSchedule.dates[selectedDate]) || [];
 
     const heading = document.createElement("h2");
     heading.textContent = "Games";
     const dayChip = document.createElement("span");
     dayChip.classList.add("count");
-    dayChip.textContent = day;
+    dayChip.textContent = selectedDate === null ? "None" : selectedDate;
     heading.appendChild(dayChip);
     container.appendChild(heading);
 
@@ -503,6 +643,7 @@ function renderAll() {
         }
 
         leftContainer.appendChild(renderSchedule());
+        rightContainer.appendChild(renderMonthGrid());
         rightContainer.appendChild(renderCalendar());
     }
 }

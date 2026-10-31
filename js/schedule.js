@@ -17,6 +17,34 @@ function seasonDays(settings){
     return dateToDay(settings.startDate, settings.endDate) + 1;
 }
 
+function daysInMonth(year, month){
+    const nextMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    const thisMonth = new Date(Date.UTC(year, month - 1, 1)).getUTCDate();
+
+    return (nextMonth - thisMonth) + 1;
+}
+
+function firstWeekday(year, month){
+    return new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
+}
+
+function shiftMonth(year, month, shift){
+    const total = year * 12 + (month - 1) + shift;
+    const newYear = Math.floor(total / 12);
+    const newMonth = (total % 12) + 1;
+
+    return {
+        year: newYear,
+        month: newMonth
+    }
+}
+
+const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function getFriendlyTitle(year, month){
+    return MONTH_NAMES[month - 1] + " " + year;
+}
+
 function makeRandom(seed){
     // mulberry32 random generation
 
